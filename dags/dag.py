@@ -68,7 +68,7 @@ dataproc_delete_cluster = DataprocClusterDeleteOperator(
 put_stuff_into_BQ = GoogleCloudStorageToBigQueryOperator(
     task_id="stuff_to_BQ",
     bucket='airflow_training_bucket',
-    source_object=['average_prices/transfer_date={{ ds }}/*.parquet'],
+    source_objects=['average_prices/transfer_date={{ ds }}/*.parquet'],
     destination_project_dataset_table='airflowbolcom-20165e4959a78c1d:yolo.table${{ ds_nodash }}',
     source_format='PARQUET',
     write_disposition='WRITE_TRUNCATE',
