@@ -53,9 +53,10 @@ dataproc_create_cluster = DataprocClusterCreateOperator(
     dag=dag,
 )
 
+
 compute_aggregates = DataProcPySparkOperator(
     task_id='compute_aggregates',
-    main='gs://gdd-training-bucket/build_statistics.py',
+    main='gs://gdd-training-bucket/build_statistics_simple.py',
     cluster_name='analyse-pricing-{{ ds }}',
     arguments=["{{ ds }}"],
     dag=dag,
@@ -65,7 +66,7 @@ compute_aggregates = DataProcPySparkOperator(
 dataproc_delete_cluster = DataprocClusterDeleteOperator(
     task_id="delete_dataproc",
     cluster_name="analyse-pricing-{{ ds }}",
-    project_id='airflowbolcom-20165e4959a78c1d'
+    project_id='airflowbolcom-20165e4959a78c1d',
     trigger_rule=TriggerRule.ALL_DONE,
     dag=dag,
 )
