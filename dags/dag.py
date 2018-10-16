@@ -4,13 +4,10 @@ from godatadriven.operators.postgres_to_gcs import PostgresToGoogleCloudStorageO
 from airflow import DAG
 from airflow.operators.python_operator import PythonOperator
 from airflow.utils.trigger_rule import TriggerRule
-
 from airflow.contrib.operators.dataproc_operator import (
     DataprocClusterCreateOperator,
     DataprocClusterDeleteOperator,
     DataProcPySparkOperator)
-
-
 
 dag = DAG(
     dag_id="my_second_daggie",
@@ -37,7 +34,6 @@ store_some_stuff = PostgresToGoogleCloudStorageOperator(
     filename='my_real_estate_result',
     dag=dag
 )
-
 
 my_task = PythonOperator(
     task_id="task_name", python_callable=print_exec_date, provide_context=True, dag=dag
