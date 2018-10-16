@@ -27,7 +27,7 @@ def print_exec_date(**context):
     print(context["execution_date"])
 
 
-store_some_stuff = PostgresToGoogleCloudStorageOperator(
+get_data = PostgresToGoogleCloudStorageOperator(
     task_id="postgres_to_gcs",
     postgres_conn_id="my_database_connection",
     sql="SELECT * FROM land_registry_price_paid_uk WHERE transfer_date = '{{ ds }}'",
@@ -40,7 +40,7 @@ my_task = PythonOperator(
     task_id="task_name", python_callable=print_exec_date, provide_context=True, dag=dag
 )
 
-dataproc_create_cluster = DataprocClusterCreateOperator(
+create_cluster = DataprocClusterCreateOperator(
     task_id="create_dataproc",
     cluster_name="analyse-pricing-{{ ds }}",
     project_id='airflowbolcom-20165e4959a78c1d',
@@ -49,7 +49,7 @@ dataproc_create_cluster = DataprocClusterCreateOperator(
     dag=dag,
 )
 
-compute_aggregates = DataProcPySparkOperator(
+comp_aggregate = DataProcPySparkOperator(
     task_id='compute_aggregates',
     main='gs://europe-west1-training-airfl-159310f1-bucket/other/build_statistics_simple.py',
     cluster_name='analyse-pricing-{{ ds }}',
@@ -57,7 +57,7 @@ compute_aggregates = DataProcPySparkOperator(
     dag=dag,
 )
 
-dataproc_delete_cluster = DataprocClusterDeleteOperator(
+del_cluster = DataprocClusterDeleteOperator(
     task_id="delete_dataproc",
     cluster_name="analyse-pricing-{{ ds }}",
     project_id='airflowbolcom-20165e4959a78c1d',
@@ -66,7 +66,7 @@ dataproc_delete_cluster = DataprocClusterDeleteOperator(
 )
 
 TABLE_THANG = 'airflowbolcom-20165e4959a78c1d:yolo.piet${{ ds_nodash }}'
-put_stuff_into_BQ = GoogleCloudStorageToBigQueryOperator(
+into_BQ = GoogleCloudStorageToBigQueryOperator(
     task_id="stuff_to_BQ",
     bucket='airflow_training_bucket',
     source_objects=['average_prices/transfer_date={{ ds }}/*.parquet'],
@@ -76,4 +76,4 @@ put_stuff_into_BQ = GoogleCloudStorageToBigQueryOperator(
     dag=dag
 )
 
-store_some_stuff >> dataproc_create_cluster >> compute_aggregates >> dataproc_delete_cluster >> put_stuff_into_BQ
+get_data >> create_cluster >> comp_aggregate >> del_cluster >> into_BQ
