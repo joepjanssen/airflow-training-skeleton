@@ -75,7 +75,7 @@ put_stuff_into_BQ = GoogleCloudStorageToBigQueryOperator(
     destination_project_dataset_table='project:dataset.table${{ ds_nodash }}',
     source_format='PARQUET',
     write_disposition='WRITE_TRUNCATE',
-    dag = dag
+    dag = dag,
 )
 
 dataproc_create_cluster >> compute_aggregates >> dataproc_delete_cluster >> put_stuff_into_BQ
