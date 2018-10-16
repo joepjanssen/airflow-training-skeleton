@@ -40,7 +40,6 @@ my_task = PythonOperator(
     task_id="task_name", python_callable=print_exec_date, provide_context=True, dag=dag
 )
 
-
 dataproc_create_cluster = DataprocClusterCreateOperator(
     task_id="create_dataproc",
     cluster_name="analyse-pricing-{{ ds }}",
@@ -50,7 +49,6 @@ dataproc_create_cluster = DataprocClusterCreateOperator(
     dag=dag,
 )
 
-
 compute_aggregates = DataProcPySparkOperator(
     task_id='compute_aggregates',
     main='gs://europe-west1-training-airfl-159310f1-bucket/other/build_statistics_simple.py',
@@ -58,7 +56,6 @@ compute_aggregates = DataProcPySparkOperator(
     arguments=["{{ ds }}"],
     dag=dag,
 )
-
 
 dataproc_delete_cluster = DataprocClusterDeleteOperator(
     task_id="delete_dataproc",
@@ -75,7 +72,7 @@ put_stuff_into_BQ = GoogleCloudStorageToBigQueryOperator(
     destination_project_dataset_table='project:dataset.table${{ ds_nodash }}',
     source_format='PARQUET',
     write_disposition='WRITE_TRUNCATE',
-    dag = dag,
+    dag=dag,
 )
 
 dataproc_create_cluster >> compute_aggregates >> dataproc_delete_cluster >> put_stuff_into_BQ
