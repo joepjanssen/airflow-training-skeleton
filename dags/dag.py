@@ -31,7 +31,7 @@ store_some_stuff = PostgresToGoogleCloudStorageOperator(
     postgres_conn_id="my_database_connection",
     sql="SELECT * FROM land_registry_price_paid_uk WHERE transfer_date = '{{ ds }}'",
     bucket='airflow_training_bucket',
-    filename='my_real_estate_result',
+    filename='land_registry_price_paid_uk/{{ ds }}/result.json',
     dag=dag
 )
 
